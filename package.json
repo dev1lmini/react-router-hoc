@@ -1,24 +1,24 @@
 {
-  "name": "feature-router",
-  "version": "0.0.1",
-  "description": "A feature router it's a router based on react that provides a new way of declaring routes in the react app with Typescript support",
+  "name": "react-router-hoc",
+  "version": "0.1.0",
+  "description": "The binding for the react-router that provides a new way of declaring react-router route with params validation and typescript support",
   "main": "lib/index.js",
-  "directories": {
-    "example": "examples"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf lib && ./node_modules/.bin/webpack"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dev1lmini/feature-router.git"
+    "url": "git@github.com:dev1lmini/react-router-hoc.git"
   },
   "keywords": [
     "router",
     "react-router",
     "feature",
     "flag",
-    "feature-router",
+    "react-route",
+    "react-router-hoc",
+    "react-router-route",
     "typescript",
     "typescript-router",
     "type-route",
@@ -27,16 +27,23 @@
   "author": "Markiian Linynskyi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dev1lmini/feature-router/issues"
+    "url": "https://github.com/dev1lmini/react-router-hoc/issues"
   },
-  "homepage": "https://github.com/dev1lmini/feature-router#readme",
+  "homepage": "https://github.com/dev1lmini/react-router-hoc#readme",
   "dependencies": {
-    "path-to-regexp": "^6.1.0",
+    "path-to-regexp": "^6.1.0"
+  },
+  "peerDependencies": {
     "react": "^16.13.1",
     "react-router": "^5.1.2"
   },
   "devDependencies": {
     "@types/react": "^16.9.32",
-    "@types/react-router": "^5.1.5"
+    "@types/react-router": "^5.1.5",
+    "awesome-typescript-loader": "^5.2.1",
+    "copy-webpack-plugin": "^5.1.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   }
 }

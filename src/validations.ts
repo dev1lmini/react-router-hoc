@@ -101,5 +101,5 @@ export class ParamsValidation<T = never> {
   }
 }
 
-export default new ParamsValidation();
+export const p = new ParamsValidation();
 

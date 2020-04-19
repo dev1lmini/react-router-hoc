@@ -1,20 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES6",
     "lib": [
       "DOM",
       "esnext"
     ],
+    "declarationDir": "./lib",
+    "baseUrl": "./src",
+    "outDir": "./lib",
     "allowJs": false,
     "skipLibCheck": false,
     "esModuleInterop": true,
+    "declaration": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "module": "ESNext",
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "resolveJsonModule": false,
+    "noUnusedLocals": true,
     "noEmit": true,
     "downlevelIteration": false,
     "typeRoots": [
