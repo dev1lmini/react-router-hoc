@@ -33,10 +33,7 @@ module.exports = {
       amd: "react-router",
     },
   },
-  devtool: "source-map",
-  // optimization: {
-  //   runtimeChunk: true,
-  // },
+  devtool: process.env.NODE_ENV === 'development'  && "source-map",
   mode: "development",
   plugins: [
     new CopyWebpackPlugin([
