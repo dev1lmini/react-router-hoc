@@ -1,13 +1,31 @@
-# React Router Route Higher Order Componet
+# React Router Route Higher-Order Component
 
-**The binding for react-router that provides a new way of declaring react-router route with params validation and typescript support**
-
-The binding helps you to declare a react-router route in the component itself or in a container. Preferably this is created to define a route in the component which helps you to contain everything in one file.
----
+_The binding for react-router that provides a new way of declaring react-router route with params validation and typescript support_
 
 ![Image](https://i.ibb.co/hF7bn5d/out.gif)
 
-### Route declaration with params validation
+## Use cases
+
+- ⚗️ Declare route inside a component
+- ⛔️ Declare validation for route params
+- 🚀 Generate links for a route
+- 💻 Get suggestions on IDE
+
+## Documentation
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#validation)
+
+## Installation
+
+`npm i react-router-hoc react-router`
+
+_The binding helps you to declare a react-router route in the component itself or in a container. Preferably this is created to define a route in the component which helps you to contain everything in one file._
+
+## Usage
+
+#### Route declaration with params validation
 
 ```tsx
 import { Route } from "react-router-hoc";
@@ -38,7 +56,7 @@ export default SearchRoute<Props>(
 );
 ```
 
-### Use it as a regular route component in the router
+#### Use it as a regular route component in the router
 
 ```tsx
 <Router>
@@ -56,7 +74,7 @@ export default SearchRoute<Props>(
 </Router>
 ```
 
-### Generate link to the route
+#### Generate link to the route
 
 ```tsx
 <Router>
@@ -94,7 +112,9 @@ export default Route(() => /** template */)
 
 [See more examples in the repo](examples)
 
-### Validation rules for route params
+## API
+
+### Validation rules
 
 _Route HOC provides a way to declare validation rules for route params, once you apply the rule it will influence route matching._
 
@@ -106,11 +126,10 @@ _Route HOC provides a way to declare validation rules for route params, once you
   optional: Route.params.string.optional
 ```
 
-| Param    | Rule                            | Match                      | Example                                    |
-| :------- | :------------------------------ | :------------------------- | :----------------------------------------- |
-| region   | **String**                      | _Match any value_          | `/:any`                                    |
-| storage  | **Number**                      | _Match only numbers_       | `/7`                                       |
-| role     | **Enum**                        | _Match one of variants_    | `/customer` or `/employee`                 |
-| hash     | **Regex** `(/[0-9a-fA-f]{40}/)` | _Match commit hash number_ | `ca82a6dff817ec66f44342007202690a93763949` |
-| optional | **Optional**                    | _Make a rule optional_     | `/any` or `/`                              |
-
+| Rule                    | Match                      | Example                                                                                   |
+| :---------------------- | :------------------------- | :---------------------------------------------------------------------------------------- |
+| `Route.params.string`   | _Match any value_          | `/:any` (`/228` -> `228` will be converted to a string)                                   |
+| `Route.params.number`   | _Match only numbers_       | `/:number` (`3078` -> `3078` will be converted to a number, `/foo` won't match the route) |
+| `Route.params.enum`     | _Match one of variants_    | `/customer` or `/employee`                                                                |
+| `Route.params.regex`    | _Match commit hash number_ | `regex(/[0-9a-fA-f]{40}/))` (`ca82a6dff817ec66f44342007202690a93763949` match commit has) |
+| `Route.params.optional` | _Make a rule optional_     | `/any` or `/`                                                                             |
