@@ -34,7 +34,10 @@ module.exports = {
     },
   },
   devtool: process.env.NODE_ENV === 'development'  && "source-map",
-  mode: "development",
+  mode: process.env.NODE_ENV,
+  optimization: {
+    minimize: process.env.NODE_ENV === 'production'
+  },
   plugins: [
     new CopyWebpackPlugin([
       {
