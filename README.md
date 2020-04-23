@@ -1,4 +1,5 @@
 # React Router Route Higher-Order Component
+_Inspired by [type-route](https://github.com/type-route/type-route)_
 
 _The binding for react-router that provides a new way of declaring react-router route with params validation and typescript support_
 
