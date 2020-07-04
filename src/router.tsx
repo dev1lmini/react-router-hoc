@@ -155,12 +155,11 @@ export function Route<V = any, P = any>(validation?: V, path?: P): any {
       const toPath = compile(routePath, { encode: encodeURIComponent });
       RouteFC.link = toPath;
     }
-
     RouteFC.defaultProps = {
       path: routePath,
     };
-
-    RouteFC.displayName = "FeatureRoute";
+    const wrappedName = WrappedComponent.displayName || WrappedComponent.name
+    RouteFC.displayName = 'RouteHoc'.concat(wrappedName ? `(${wrappedName})`: '')
     return RouteFC;
   };
 }
