@@ -1,13 +1,16 @@
 import React from "react";
-import { Route } from "react-router-hoc";
+import { Route, compose } from "react-router-hoc";
+import { ProtectedRoute } from "../utils/hocs";
 
-const DashboardRoute = Route(
-  {
-    role: Route.params.enum("customer", "vendor"),
-  },
-  ({ role }) => `/dashboard/${role}`
+const DashboardRoute = compose(
+  ProtectedRoute,
+  Route(
+    {
+      role: Route.params.enum("customer", "vendor"),
+    },
+    ({ role }) => `/dashboard/${role}`
+  )
 );
-
 export default DashboardRoute(({ match: { params: { role } } }) => (
   <div>Dashboard for {role}</div>
 ));
