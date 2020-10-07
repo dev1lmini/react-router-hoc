@@ -45,7 +45,7 @@ type Props = {
   user?: User;
 };
 
-export default SearchRoute<Props>(
+export default DashboardRoute<Props>(
   ({
     user,
     match: {
@@ -75,12 +75,64 @@ export default SearchRoute<Props>(
 </Router>
 ```
 
+### Links generation
+
+#### Generate links object
+
+```tsx
+// App.tsx
+
+import { getLinks } from 'react-router-hoc'
+
+import Dashboard from 'Dashboard'
+import Search from 'Search'
+import Article from 'Article'
+import Home from 'Home'
+
+export const links = getLinks({
+  Dashboard,
+  Search,
+  Article,
+  Home
+})
+
+
+// Search.tsx
+import { links } from 'App'
+import { Link } from 'react-router-dom'
+import { Route } from 'react-router-hoc'
+
+export default Route(`search`)(() => <section>
+  <Link to={links.Dashboard({ role: 'customer', region: 'Staryi Sambir'})}>
+</section>)
+```
+
 #### Generate link to the route
 
 ```tsx
+import Dashboard from 'Dashboard'
+
 <Router>
   <Link to={Dashboard.link({ role: 'customer', region: 'Staryi Sambir'})}>
 </Router>
+```
+
+### HOCs composition
+
+### Use `compose` to combine any HOCs with Route HOC
+
+```tsx
+import { ProtectedRoute } from 'utils/hocs'
+import { Route, compose } from 'react-router-hoc'
+
+const SearchRoute = compose(
+  ProtectedRoute,
+  Route({
+    city: Route.params.string
+  }, ({ city}) => `/search/${city}`)
+)
+
+export default SearchRoute(() => /* template /*)
 ```
 
 #### Route declaration without params
