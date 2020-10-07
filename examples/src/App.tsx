@@ -16,11 +16,10 @@ export const links = getLinks({
   Dashboard,
   Home,
   Search,
-  Article
-})
+  Article,
+});
 
 function App() {
-
   return (
     <div className="App">
       <header className="App-header">
@@ -28,7 +27,7 @@ function App() {
           <Switch>
             <Home exact />
             <Search />
-            <Dashboard />
+            <Dashboard access={false} />
             <Article />
             <NotFound />
           </Switch>
@@ -41,9 +40,5 @@ function App() {
     </div>
   );
 }
-
-
-
-
 
 export default App;
