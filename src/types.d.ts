@@ -1,7 +1,10 @@
 import { ParamsValidation } from "./validations";
 import { StaticContext } from "react-router";
 import * as H from "history";
+import { ComponentType } from "react";
 export type ExtractArray<T> = T extends Array<infer G> ? G : never;
+
+export type GetProps<T> = T extends ComponentType<infer P> ? P : any
 
 export type ExtractParams<T> = {
   [P in keyof T]: T[P] extends ParamsValidation<infer L> ? L : string;

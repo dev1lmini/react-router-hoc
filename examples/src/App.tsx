@@ -8,8 +8,16 @@ import Dashboard from "./routes/Dashboard";
 import Home from "./routes/Home";
 import NotFound from "./routes/NotFound";
 import Article from "./routes/Article";
+import { getLinks } from "react-router-hoc";
 
 const history = createBrowserHistory();
+
+export const links = getLinks({
+  Dashboard,
+  Home,
+  Search,
+  Article,
+});
 
 function App() {
   return (
@@ -19,22 +27,18 @@ function App() {
           <Switch>
             <Home exact />
             <Search />
-            <Dashboard />
+            <Dashboard access={false} />
             <Article />
             <NotFound />
           </Switch>
-          <Link to={Home.link()}>Home</Link>
-          <Link to={Dashboard.link({ role: "customer" })}>Dashboard</Link>
-          <Link to={Search.link({ city: "Lviv" })}>Search</Link>
-          <Link to={Article.link({ id: 10 })}>Article #10</Link>
+          <Link to={links.Home()}>Home</Link>
+          <Link to={links.Dashboard({ role: "customer" })}>Dashboard</Link>
+          <Link to={links.Search({ city: "Lviv" })}>Search</Link>
+          <Link to={links.Article({ id: 10 })}>Article #10</Link>
         </Router>
       </header>
     </div>
   );
 }
-
-
-
-
 
 export default App;
