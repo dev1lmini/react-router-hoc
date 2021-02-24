@@ -9,9 +9,7 @@ Route.params = new ParamsValidation();
 export function Route<Props>(
   WrappedComponent: React.FC<
     Props &
-      FRouteComponentProps<{}> & {
-        link: () => string;
-      }
+      FRouteComponentProps<{}>
   >
 ): React.FC<Props & RouteProps>
 export function Route<P extends string>(
@@ -113,7 +111,7 @@ export function Route<V = any, P = any>(validation?: V, path?: P): any {
     if (typeof validation === "string") {
       routePath = validation;
     }
-
+    const toPath = routePath ? compile(routePath, { encode: encodeURIComponent }) : () => undefined as any;
     /**
      * Generated Route with route props & own props
      */
@@ -145,16 +143,14 @@ export function Route<V = any, P = any>(validation?: V, path?: P): any {
         <ReactRoute
           {...routeProps}
           render={(routeProps) => (
-            <WrappedComponent {...props} {...routeProps} />
+            <WrappedComponent link={toPath} {...props} {...routeProps} />
           )}
         />
       );
     };
 
-    if (routePath) {
-      const toPath = compile(routePath, { encode: encodeURIComponent });
-      RouteFC.link = toPath;
-    }
+
+    RouteFC.link = toPath;
     RouteFC.defaultProps = {
       path: routePath,
     };
