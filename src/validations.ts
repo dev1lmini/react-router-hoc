@@ -1,4 +1,4 @@
-import { ExtractArray } from "./types";
+import type { ExtractArray } from "./types";
 
 enum RulesEnum {
   STRING = "string",
@@ -9,7 +9,6 @@ enum RulesEnum {
 }
 
 export class ParamsValidation<T = never> {
-  param: "params" = "params";
   private regexes: {
     [P in RulesEnum]: (
       rule: string | Array<number | string>,
@@ -59,13 +58,13 @@ export class ParamsValidation<T = never> {
     );
   };
 
-  enum<A extends Array<number | string>>(...a: A) {
+  enum<Keys extends Array<number | string>>(...keys: Keys) {
     if (!this._rules) {
       throw Error(`Validation hasn't been initialized`);
     }
-    return new ParamsValidation<T | ExtractArray<A>>({
+    return new ParamsValidation<T | ExtractArray<Keys>>({
       ...this._rules,
-      enum: a,
+      enum: keys,
     });
   }
 
@@ -100,6 +99,4 @@ export class ParamsValidation<T = never> {
     });
   }
 }
-
-export const p = new ParamsValidation();
 
