@@ -41,8 +41,8 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       {
-        from: "src/types.d.ts",
-        to: ".",
+        from: "src/types/",
+        to: "./types",
       },
     ]),
   ],

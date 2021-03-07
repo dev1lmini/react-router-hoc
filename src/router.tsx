@@ -1,50 +1,43 @@
-import { ParamsValidation } from "./validations";
-import { ExtractOnlyParams, FRouteComponentProps } from "./types";
-import React from "react";
-import { compile } from "path-to-regexp";
-import { Route as ReactRoute, RouteProps } from "react-router";
+import React from "react"
+import { Route as ReactRoute } from "react-router"
+import type { RouteProps } from "react-router"
+import { compile } from "path-to-regexp"
+import { ParamsValidation } from "./validations"
+import type { RouteHOCProps, Params, RouteLink } from "./types"
 
-Route.params = new ParamsValidation();
+Route.params = new ParamsValidation()
 
 export function Route<Props>(
-  WrappedComponent: React.FC<
-    Props &
-      FRouteComponentProps<{}>
-  >
+  WrappedComponent: React.FC<Props & RouteHOCProps>
 ): React.FC<Props & RouteProps>
-export function Route<P extends string>(
-  path: P
+export function Route<Path extends string>(
+  path: Path
 ): <Props>(
-  WrappedComponent: React.FC<
-    Props &
-      FRouteComponentProps<{}> & {
-        link: () => string;
-      }
-  >
+  WrappedComponent: React.FC<Props & RouteHOCProps<Path>>
 ) => React.FC<Props & RouteProps> & {
-  link: () => string;
-};
+  link: RouteLink<Path>
+}
 export function Route<
-  V extends {
-    [x: string]: ParamsValidation<any>;
+  Validation extends {
+    [x: string]: ParamsValidation<any>
   },
-  P extends (values: ExtractOnlyParams<V>) => string
+  Path extends (values: Params<Validation>) => string
 >(
-  validation: V,
-  path: P
+  validation: Validation,
+  path: Path
 ): <Props>(
   WrappedComponent: React.FC<
-    Props &
-      FRouteComponentProps<ExtractOnlyParams<V>> & {
-        link: (params: ExtractOnlyParams<V>) => string;
-      }
+    Props & RouteHOCProps<ReturnType<Path>, Params<Validation>>
   >
 ) => React.FC<Props & RouteProps> & {
-  link: (params: ExtractOnlyParams<V>) => string;
-};
-export function Route<V = any, P = any>(validation?: V, path?: P): any {
-  if (typeof validation === 'function') {
-    const WrappedComponent = validation;
+  link: RouteLink<ReturnType<Path>, Params<Validation>>
+}
+export function Route<Validation = any, Path = any>(
+  validation?: Validation,
+  path?: Path
+): any {
+  if (typeof validation === "function") {
+    const WrappedComponent = validation
 
     const RouteFC: React.FC<RouteProps> = ({
       location,
@@ -66,57 +59,55 @@ export function Route<V = any, P = any>(validation?: V, path?: P): any {
         sensitive,
         strict,
         path
-      };
+      }
 
       return (
         <ReactRoute
           {...routeProps}
-          render={(routeProps) => (
-            <WrappedComponent {...props} {...routeProps} />
-          )}
+          render={routeProps => <WrappedComponent {...props} {...routeProps} />}
         />
-      );
-    };
+      )
+    }
 
-    RouteFC.displayName = "FeatureRoute";
+    RouteFC.displayName = "RouteHOC"
     return RouteFC
   }
   return function (WrappedComponent: any): any {
-    let routePath: string | undefined;
+    let routePath: string | undefined
 
     /**
      * When user provide route params and path factory
      */
     if (typeof validation === "object") {
-      const paramsPath = Object.entries(validation).reduce<
-        ExtractOnlyParams<V>
-      >(
+      const paramsPath = Object.entries(validation).reduce<Params<Validation>>(
         (acc, [key, item]) => ({
           ...acc,
-          [key]: item.generateRules(key),
+          [key]: item.generateRules(key)
         }),
-        {} as ExtractOnlyParams<V>
-      );
+        {} as Params<Validation>
+      )
       if (typeof path === "function") {
-        routePath = path(paramsPath);
+        routePath = path(paramsPath)
       } else {
         throw new Error(
           `You haven't provided path function as a second argument`
-        );
+        )
       }
     }
     /**
      * When user provide only route path
      */
     if (typeof validation === "string") {
-      routePath = validation;
+      routePath = validation
     }
-    const toPath = routePath ? compile(routePath, { encode: encodeURIComponent }) : () => undefined as any;
+    const toPath = routePath
+      ? compile(routePath, { encode: encodeURIComponent })
+      : () => undefined as any
     /**
      * Generated Route with route props & own props
      */
-    const RouteFC: React.FC<any> & {
-      link: (params: ExtractOnlyParams<V>) => string;
+    const RouteFC: React.FC<RouteProps> & {
+      link: (params: Params<Validation>) => string
     } = ({
       location,
       component,
@@ -137,25 +128,26 @@ export function Route<V = any, P = any>(validation?: V, path?: P): any {
         sensitive,
         strict,
         path: routePath
-      };
+      }
 
       return (
         <ReactRoute
           {...routeProps}
-          render={(routeProps) => (
+          render={routeProps => (
             <WrappedComponent link={toPath} {...props} {...routeProps} />
           )}
         />
-      );
-    };
+      )
+    }
 
-
-    RouteFC.link = toPath;
+    RouteFC.link = toPath
     RouteFC.defaultProps = {
-      path: routePath,
-    };
+      path: routePath
+    }
     const wrappedName = WrappedComponent.displayName || WrappedComponent.name
-    RouteFC.displayName = 'RouteHoc'.concat(wrappedName ? `(${wrappedName})`: '')
-    return RouteFC;
-  };
+    RouteFC.displayName = "RouteHOC".concat(
+      wrappedName ? `(${wrappedName})` : ""
+    )
+    return RouteFC
+  }
 }
