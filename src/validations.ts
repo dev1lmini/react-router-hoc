@@ -8,6 +8,16 @@ enum RulesEnum {
   OPTIONAL = "optional",
 }
 
+
+enum QueryParamsType {
+  STRING = "string",
+  NUMBER = "number",
+  ENUM = "enum",
+  BOOLEAN = "boolean",
+  ARRAY = "array",
+  REGEX = "regex",
+  REQUIRED = "required"
+}
 export class ParamsValidation<T = never> {
   private regexes: {
     [P in RulesEnum]: (
@@ -97,6 +107,52 @@ export class ParamsValidation<T = never> {
       ...this._rules,
       optional: true,
     });
+  }
+}
+
+export class QueryParamsValidation<T = never> {
+  constructor(
+    private _rules?: {
+      [P in QueryParamsType]: boolean | Array<number | string> | RegExp;
+    }
+  ) {
+    this._rules = this._rules ?? {
+      string: false,
+      array: false,
+      number: false,
+      boolean: false,
+      enum: [],
+      regex: false,
+      required: false,
+    };
+  }
+
+  required<K extends T>(_defaultParam: K): QueryParamsValidation<NonNullable<T>> {
+    return this
+  }
+
+  array<K extends QueryParamsValidation>(type: K): QueryParamsValidation<T | Array<K extends QueryParamsValidation<infer V> ? V : any> | undefined> {
+    return this
+  }
+
+  get number(): QueryParamsValidation<T | number | undefined> {
+    return this
+  }
+
+  get string(): QueryParamsValidation<T | string | undefined> {
+    return this
+  }
+
+  get boolean(): QueryParamsValidation<T | boolean | undefined> {
+    return this
+  }
+
+  get regex(): QueryParamsValidation<T | string | undefined> {
+    return this
+  }
+
+  enum<Keys extends Array<number | string>>(...keys: Keys): QueryParamsValidation<T | ExtractArray<Keys> | undefined> {
+    return this
   }
 }
 

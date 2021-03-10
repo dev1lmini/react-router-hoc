@@ -2,10 +2,11 @@ import React from "react"
 import { Route as ReactRoute } from "react-router"
 import type { RouteProps } from "react-router"
 import { compile } from "path-to-regexp"
-import { ParamsValidation } from "./validations"
-import type { RouteHOCProps, Params, RouteLink } from "./types"
+import { ParamsValidation, QueryParamsValidation } from "./validations"
+import type { RouteHOCProps, Params, RouteLink, QueryParams } from "./types"
 
 Route.params = new ParamsValidation()
+Route.query = new QueryParamsValidation()
 
 export function Route<Props>(
   WrappedComponent: React.FC<Props & RouteHOCProps>
@@ -19,7 +20,7 @@ export function Route<Path extends string>(
 }
 export function Route<
   Validation extends {
-    [x: string]: ParamsValidation<any>
+    [x: string]: ParamsValidation<any> | QueryParamsValidation<any>
   },
   Path extends (values: Params<Validation>) => string
 >(
@@ -27,7 +28,7 @@ export function Route<
   path: Path
 ): <Props>(
   WrappedComponent: React.FC<
-    Props & RouteHOCProps<ReturnType<Path>, Params<Validation>>
+    Props & RouteHOCProps<ReturnType<Path>, Params<Validation>, QueryParams<Validation>>
   >
 ) => React.FC<Props & RouteProps> & {
   link: RouteLink<ReturnType<Path>, Params<Validation>>
