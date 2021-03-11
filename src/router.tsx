@@ -2,11 +2,31 @@ import React from "react"
 import { Route as ReactRoute } from "react-router"
 import type { RouteProps } from "react-router"
 import { compile } from "path-to-regexp"
-import { ParamsValidation, QueryParamsValidation } from "./validations"
+import {
+  ParamsValidation,
+  QueryParamsValidation,
+  QueryParam
+} from "./validations"
 import type { RouteHOCProps, Params, RouteLink, QueryParams } from "./types"
 
 Route.params = new ParamsValidation()
 Route.query = new QueryParamsValidation()
+
+const findRequired = (
+  params: [string, QueryParam<any> | undefined][] | undefined
+): [string, QueryParam<any> | undefined][] | undefined => {
+  return params?.filter(([key, value]) => {
+    return Array.isArray(value?.valueOf())
+      ? value?.isRequired ||
+          findRequired(
+            value?.valueOf().map((item: any) => {
+              console.log(item)
+              return [key, item]
+            })
+          )?.length
+      : value?.isRequired
+  })
+}
 
 export function Route<Props>(
   WrappedComponent: React.FC<Props & RouteHOCProps>
@@ -28,7 +48,12 @@ export function Route<
   path: Path
 ): <Props>(
   WrappedComponent: React.FC<
-    Props & RouteHOCProps<ReturnType<Path>, Params<Validation>, QueryParams<Validation>>
+    Props &
+      RouteHOCProps<
+        ReturnType<Path>,
+        Params<Validation>,
+        QueryParams<Validation>
+      >
   >
 ) => React.FC<Props & RouteProps> & {
   link: RouteLink<ReturnType<Path>, Params<Validation>>
@@ -81,10 +106,15 @@ export function Route<Validation = any, Path = any>(
      */
     if (typeof validation === "object") {
       const paramsPath = Object.entries(validation).reduce<Params<Validation>>(
-        (acc, [key, item]) => ({
-          ...acc,
-          [key]: item.generateRules(key)
-        }),
+        (acc, [key, item]) => {
+          if (item instanceof ParamsValidation) {
+            return {
+              ...acc,
+              [key]: item.generateRules(key)
+            }
+          }
+          return acc
+        },
         {} as Params<Validation>
       )
       if (typeof path === "function") {
@@ -134,9 +164,52 @@ export function Route<Validation = any, Path = any>(
       return (
         <ReactRoute
           {...routeProps}
-          render={routeProps => (
-            <WrappedComponent link={toPath} {...props} {...routeProps} />
-          )}
+          render={({ match, ...routeProps }) => {
+            const searchParams = new URLSearchParams(routeProps.location.search)
+            const queryParams =
+              typeof validation === "object"
+                ? Object.entries(validation).reduce<
+                    [string, QueryParam<any> | undefined][]
+                  >((acc, [key, item]) => {
+                    if (item instanceof QueryParamsValidation) {
+                      return acc.concat([
+                        [key, item.validate(searchParams.getAll(key))]
+                      ])
+                    }
+                    return acc
+                  }, [])
+                : []
+
+            const requiredParams = findRequired(queryParams)
+
+            const query = queryParams.reduce(
+              (acc, [key, value]) => ({
+                ...acc,
+                [key]: value?.valueOf(true)
+              }),
+              {} as QueryParams<Validation>
+            )
+
+            if (requiredParams?.length) {
+              requiredParams.forEach(([key, param]) =>
+                searchParams.set(key, param?.valueOf(true))
+              )
+              routeProps.history.replace({ search: searchParams.toString() })
+            }
+
+            const newMatch = {
+              ...match,
+              query
+            }
+            return (
+              <WrappedComponent
+                link={toPath}
+                {...props}
+                {...routeProps}
+                match={newMatch}
+              />
+            )
+          }}
         />
       )
     }

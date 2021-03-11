@@ -19,8 +19,8 @@ export type QueryParamsType<T> = {
 export type Params<T> = SubType<ParamsType<SubType<T, ParamsValidation>>, {}> &
   Partial<PickType<ParamsType<SubType<T, ParamsValidation>>, undefined>>
 
-export type QueryParams<T> = SubType<QueryParamsType<SubType<T, QueryParamsValidation>>, {}> &
-Partial<PickType<QueryParamsType<SubType<T, QueryParamsValidation>>, undefined>>
+export type QueryParams<T> = SubType<QueryParamsType<SubType<T, QueryParamsValidation<any>>>, {}> &
+Partial<PickType<QueryParamsType<SubType<T, QueryParamsValidation<any>>>, undefined>>
 
 export type RouteLink<
   Path extends string | undefined,
@@ -31,13 +31,10 @@ export type RouteLink<
   ? (params?: Params) => Path
   : (params: Params) => Path
 
-type Match<Params = {}> = Omit<RouteMatch<Params>, "params"> & {
+type Match<Params = {}, QueryParams = {}> = Omit<RouteMatch<Params>, "params"> & {
   params: Params
+  query: QueryParams
 }
-
-type Location<S, Q> =  Omit<H.Location<S>, 'search'> & {
-  search: keyof Q extends never ? H.Search : Q
-};
 
 export type RouteHOCProps<
   Path extends string | undefined = undefined,
@@ -45,8 +42,7 @@ export type RouteHOCProps<
   QueryParams = {},
   C extends StaticContext = StaticContext,
   S = H.LocationState
-> = Omit<RouteComponentProps<Params, C, S>, "match" | "location"> & {
-  match: Match<Params>
+> = Omit<RouteComponentProps<Params, C, S>, "match"> & {
+  match: Match<Params, QueryParams>
   link: RouteLink<Path, Params>
-  location: Location<S, QueryParams>
 }
