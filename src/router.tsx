@@ -7,7 +7,14 @@ import {
   QueryParamsValidation,
   QueryParam
 } from "./validations"
-import type { RouteHOCProps, Params, RouteLink, QueryParams } from "./types"
+import type {
+  RouteHOCProps,
+  Params,
+  RouteLink,
+  QueryParams,
+  RoutePath,
+  GetPath
+} from "./types"
 
 Route.params = new ParamsValidation()
 Route.query = new QueryParamsValidation()
@@ -42,21 +49,17 @@ export function Route<
   Validation extends {
     [x: string]: ParamsValidation<any> | QueryParamsValidation<any>
   },
-  Path extends (values: Params<Validation>) => string
+  Path extends RoutePath<Params<Validation>>
 >(
   validation: Validation,
   path: Path
 ): <Props>(
   WrappedComponent: React.FC<
     Props &
-      RouteHOCProps<
-        ReturnType<Path>,
-        Params<Validation>,
-        QueryParams<Validation>
-      >
+      RouteHOCProps<GetPath<Path>, Params<Validation>, QueryParams<Validation>>
   >
 ) => React.FC<Props & RouteProps> & {
-  link: RouteLink<ReturnType<Path>, Params<Validation>>
+  link: RouteLink<GetPath<Path>, Params<Validation>>
 }
 export function Route<Validation = any, Path = any>(
   validation?: Validation,
@@ -117,12 +120,14 @@ export function Route<Validation = any, Path = any>(
         },
         {} as Params<Validation>
       )
-      if (typeof path === "function") {
+      if (Object.keys(paramsPath).length) {
+        if (typeof path !== "function")
+          throw new Error(
+            `You haven't provided path function as a second argument`
+          )
         routePath = path(paramsPath)
       } else {
-        throw new Error(
-          `You haven't provided path function as a second argument`
-        )
+        routePath = path && String(path)
       }
     }
     /**
