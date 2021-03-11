@@ -59,7 +59,7 @@ export function Route<
       RouteHOCProps<GetPath<Path>, Params<Validation>, QueryParams<Validation>>
   >
 ) => React.FC<Props & RouteProps> & {
-  link: RouteLink<GetPath<Path>, Params<Validation>>
+  link: RouteLink<GetPath<Path>, Params<Validation>, QueryParams<Validation>>
 }
 export function Route<Validation = any, Path = any>(
   validation?: Validation,
