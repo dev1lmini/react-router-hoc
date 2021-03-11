@@ -22,6 +22,10 @@ export type Params<T> = SubType<ParamsType<SubType<T, ParamsValidation>>, {}> &
 export type QueryParams<T> = SubType<QueryParamsType<SubType<T, QueryParamsValidation<any>>>, {}> &
 Partial<PickType<QueryParamsType<SubType<T, QueryParamsValidation<any>>>, undefined>>
 
+export type RoutePath<Params = {}> = keyof Params extends never ? string : (params: Params) => string
+
+export type GetPath<Path> = Path extends (...args: any) => any ?  ReturnType<Path> : Path
+
 export type RouteLink<
   Path extends string | undefined,
   Params = {}
