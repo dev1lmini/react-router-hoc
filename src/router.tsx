@@ -1,7 +1,6 @@
 import React from "react"
 import { Route as ReactRoute } from "react-router"
 import type { RouteProps } from "react-router"
-import { compile } from "path-to-regexp"
 import {
   ParamsValidation,
   QueryParamsValidation,
@@ -15,6 +14,7 @@ import type {
   RoutePath,
   GetPath
 } from "./types"
+import { generateLink } from "./links"
 
 Route.params = new ParamsValidation()
 Route.query = new QueryParamsValidation()
@@ -34,6 +34,8 @@ const findRequired = (
       : value?.isRequired
   })
 }
+
+const isFunction= (value: any): value is (...args: any[]) => any => typeof value === 'function'
 
 export function Route<Props>(
   WrappedComponent: React.FC<Props & RouteHOCProps>
@@ -61,7 +63,7 @@ export function Route<
 ) => React.FC<Props & RouteProps> & {
   link: RouteLink<GetPath<Path>, Params<Validation>, QueryParams<Validation>>
 }
-export function Route<Validation = any, Path = any>(
+export function Route<Validation = any, Path extends RoutePath<Params<Validation>> = any>(
   validation?: Validation,
   path?: Path
 ): any {
@@ -103,7 +105,7 @@ export function Route<Validation = any, Path = any>(
   }
   return function (WrappedComponent: any): any {
     let routePath: string | undefined
-
+    let toPath: any
     /**
      * When user provide route params and path factory
      */
@@ -120,30 +122,39 @@ export function Route<Validation = any, Path = any>(
         },
         {} as Params<Validation>
       )
-      if (Object.keys(paramsPath).length) {
-        if (typeof path !== "function")
-          throw new Error(
-            `You haven't provided path function as a second argument`
-          )
-        routePath = path(paramsPath)
-      } else {
-        routePath = path && String(path)
+      const queryParams = Object.entries(validation).reduce<QueryParams<Validation>>(
+        (acc, [key, item]) => {
+          if (item instanceof QueryParamsValidation) {
+            return {
+              ...acc,
+              [key]: item
+            }
+          }
+          return acc
+        },
+        {} as QueryParams<Validation>
+      )
+      if (Object.keys(paramsPath).length && typeof path === 'string') {
+        throw new Error(
+          `You haven't provided path function as a second argument`
+        )
       }
+      routePath = isFunction(path) ? path(paramsPath) : path?.toString()
+      toPath = generateLink(routePath, paramsPath, queryParams)
     }
     /**
      * When user provide only route path
      */
     if (typeof validation === "string") {
       routePath = validation
+      toPath = generateLink(routePath)
     }
-    const toPath = routePath
-      ? compile(routePath, { encode: encodeURIComponent })
-      : () => undefined as any
+
     /**
      * Generated Route with route props & own props
      */
     const RouteFC: React.FC<RouteProps> & {
-      link: (params: Params<Validation>) => string
+      link: RouteLink<GetPath<Path>, Params<Validation>, QueryParams<Validation>>
     } = ({
       location,
       component,
@@ -218,8 +229,7 @@ export function Route<Validation = any, Path = any>(
         />
       )
     }
-
-    RouteFC.link = toPath
+    RouteFC.link = toPath as any
     RouteFC.defaultProps = {
       path: routePath
     }
