@@ -26,7 +26,8 @@ export type QueryParams<T> = SubType<
     PickType<QueryParamsType<SubType<T, QueryParamsValidation<any>>>, undefined>
   >
 
-export type RoutePath<Params = {}> = keyof Params extends never
+
+export type RoutePath<Params = undefined> = keyof Params extends never
   ? string
   : (params: Params) => string
 
