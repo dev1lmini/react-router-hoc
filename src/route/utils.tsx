@@ -17,7 +17,7 @@ export const isComponent = (value: any): value is FunctionComponent =>
 
 export function wrappedComponentFactory<Props extends RouteComponentProps>(
   WrappedComponent: FC<Props>
-): FC<Props & { queryValidation?: QueryParams<any> }> {
+): FC<Props & { queryValidation?: QueryParams<any>; link: RouteLink<string> }> {
   return ({ match, queryValidation, ...props }) => {
     const query = queryMatch(props.location.search, queryValidation)
     const newMatch = {
@@ -35,8 +35,11 @@ export function routeComponentFactory<
   }
 >(
   wrappedComponent: FC<Props>,
+  link: (...args: any[]) => string | undefined ,
   validation?: Validation
-): FC<RouteProps> & { link?: RouteLink<string> } {
+): FC<RouteProps> & { link?: (...args: any[]) => string | undefined } {
+  const WrappedComponent = wrappedComponentFactory(wrappedComponent)
+  const queryParams = getQueryParams(validation)
   return ({
     location,
     component,
@@ -59,10 +62,6 @@ export function routeComponentFactory<
       path
     }
 
-    const queryParams = getQueryParams(validation)
-
-    const WrappedComponent = wrappedComponentFactory(wrappedComponent)
-
     return (
       <ReactRoute
         {...routeProps}
@@ -70,6 +69,7 @@ export function routeComponentFactory<
           <WrappedComponent
             {...(props as any)}
             {...routeCompponentProps}
+            link={link}
             queryValidation={queryParams}
           />
         )}
