@@ -8,7 +8,6 @@ import type {
   QueryParams,
   RoutePath,
   GetPath,
-  RetunFunctionType
 } from "../types"
 import { generateLink } from "../links"
 import { getParams, getQueryParams } from "../utils"
@@ -51,48 +50,57 @@ export function Route<
   Path extends RoutePath<Params<ValidationOrComponent>> = any
 >(validationOrComponent?: ValidationOrComponent, path?: Path): any {
   if (isComponent(validationOrComponent)) {
-    const RouteComponent = routeComponentFactory(validationOrComponent)
+    const RouteComponent = routeComponentFactory(
+      validationOrComponent,
+      () => undefined
+    )
     RouteComponent.displayName = "RouteHOC"
     return RouteComponent
   }
 
   return (
     WrappedComponent: React.FC
-  ): React.FC & { link: RouteLink<RetunFunctionType<Path>> } => {
+  ): React.FC & { link: (...args: any[]) => string | undefined } => {
     let routePath: string | undefined
-    let toPath: any
     /**
      * When user provide route params and path factory
      */
     if (typeof validationOrComponent === "object") {
-      const pathParams = getParams(validationOrComponent)
-      const queryParams = getQueryParams(validationOrComponent)
-      if (!pathParams || Object.keys(pathParams).length && typeof path === "string") {
+      var pathParams = getParams(validationOrComponent)
+      var queryParams = getQueryParams(validationOrComponent)
+      if (
+        !pathParams ||
+        (Object.keys(pathParams).length && typeof path === "string")
+      ) {
         throw new Error(
           `You haven't provided path function as a second argument`
         )
       }
       routePath = isFunction(path) ? path(pathParams) : path?.toString()
-      toPath = generateLink(routePath, pathParams, queryParams)
     }
     /**
      * When user provide only route path
      */
     if (typeof validationOrComponent === "string") {
       routePath = validationOrComponent
-      toPath = generateLink(routePath)
     }
+
+    let link: RouteLink<
+      string,
+      Params<ValidationOrComponent>,
+      QueryParams<ValidationOrComponent>
+    > = generateLink(routePath, pathParams, queryParams)
 
     /**
      * Generated Route with route props & own props
      */
-    const validation: {[x: string]:  any} | undefined = typeof validationOrComponent === 'object' ? validationOrComponent : undefined
-    const RouteFC = routeComponentFactory(
-      WrappedComponent,
-      validation
-    )
+    const validation: { [x: string]: any } | undefined =
+      typeof validationOrComponent === "object"
+        ? validationOrComponent
+        : undefined
+    const RouteFC = routeComponentFactory(WrappedComponent, link, validation)
 
-    RouteFC.link = toPath
+    RouteFC.link = link
     RouteFC.defaultProps = {
       path: routePath
     }

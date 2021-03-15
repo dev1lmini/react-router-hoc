@@ -16,7 +16,6 @@ export type PickType<Type, Pattern> = Pick<
 >
 
 export type ReturnTypeNoConstraints<T> = T extends (...args: any) => infer R ? R : any;
-export type RetunFunctionType<T> = T extends (...args: any) => infer R ? R : T;
 export type Arguments<T> = T extends (args: infer P) => any ? P : any;
 export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   k: infer I
