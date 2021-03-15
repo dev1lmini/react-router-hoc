@@ -40,7 +40,7 @@ export type RouteLink<
   Params = {},
   QueryParams = {}
 > = keyof (Params & QueryParams) extends never
-  ? Path
+  ? () => Path
   : keyof SubType<Params, {}> extends undefined
   ? (params?: Params & Partial<QueryParams>) => Path
   : (params: Params & Partial<QueryParams>) => Path
