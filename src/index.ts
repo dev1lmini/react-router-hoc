@@ -1,3 +1,3 @@
-export { Route } from "./router"
+export { Route } from "./route"
 export { getLinks } from "./links"
 export { compose } from "./composer"
