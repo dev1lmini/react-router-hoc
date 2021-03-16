@@ -6,7 +6,7 @@ const DashboardRoute = compose(
   ProtectedRoute,
   Route(
     {
-      role: Route.params.enum("customer", "vendor"),
+      role: Route.params.oneOf("customer", "vendor"),
     },
     ({ role }) => `/dashboard/${role}`
   )

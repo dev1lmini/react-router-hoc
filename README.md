@@ -33,7 +33,7 @@ import { Route } from "react-router-hoc";
 
 const DashboardRoute = Route(
   {
-    role: Route.params.enum("customer", "employee"),
+    role: Route.params.oneOf("customer", "employee"),
     region: Route.params.string,
     storage: Route.params.number.optional,
   },
@@ -172,7 +172,7 @@ export default Route(() => /** template */)
 _Route HOC provides a way to declare validation rules for route params, once you apply the rule it will influence route matching._
 
 ```tsx
-  role: Route.params.enum("customer", "employee"),
+  role: Route.params.oneOf("customer", "employee"),
   region: Route.params.string,
   storage: Route.params.number,
   hash: Route.params.regex(/[0-9a-fA-f]{40}/),
@@ -183,6 +183,6 @@ _Route HOC provides a way to declare validation rules for route params, once you
 | :---------------------- | :------------------------- | :---------------------------------------------------------------------------------------- |
 | `Route.params.string`   | _Match any value_          | `/:any` (`/228` -> `228` will be converted to a string)                                   |
 | `Route.params.number`   | _Match only numbers_       | `/:number` (`3078` -> `3078` will be converted to a number, `/foo` won't match the route) |
-| `Route.params.enum`     | _Match one of variants_    | `/customer` or `/employee`                                                                |
+| `Route.params.oneOf`     | _Match one of variants_    | `/customer` or `/employee`                                                                |
 | `Route.params.regex`    | _Match commit hash number_ | `regex(/[0-9a-fA-f]{40}/)` (`ca82a6dff817ec66f44342007202690a93763949` match commit hash) |
 | `Route.params.optional` | _Make a rule optional_     | `/any` or `/`                                                                             |
