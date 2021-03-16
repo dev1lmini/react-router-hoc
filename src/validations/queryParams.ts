@@ -152,7 +152,7 @@ export class QueryParamsValidation<T = never> {
     })
   }
 
-  enum<Keys extends Array<number | string>>(...keys: Keys) {
+  oneOf<Keys extends Array<number | string>>(...keys: Keys) {
     return new QueryParamsValidation<T | ExtractArray<Keys> | undefined>({
       enum: keys,
     })

@@ -105,14 +105,7 @@ export function Route<
       path: routePath
     }
     let wrappedName = WrappedComponent.displayName || WrappedComponent.name
-    Object.defineProperty(RouteFC, "displayName", {
-      get() {
-        return "RouteHOC".concat(wrappedName ? `(${wrappedName})` : "")
-      },
-      set(value: string) {
-        wrappedName = value
-      }
-    })
+    RouteFC.displayName = "RouteHOC".concat(wrappedName ? `(${wrappedName})` : "")
     return RouteFC as any
   }
 }
