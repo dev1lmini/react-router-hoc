@@ -1,7 +1,7 @@
 
 export type RouteWithLink = {
   [x: string]: any
-  link: ((params: any) => string) | string | undefined;
+  link: (...args: any[]) => string | undefined;
 }
 
-export type GetLink<T> = T extends RouteWithLink ? NonNullable<T['link']> : string
+export type GetLink<T> = T extends RouteWithLink ? T['link'] : string
