@@ -58,7 +58,7 @@ export class ParamsValidation<T = never> {
     )
   }
 
-  enum<Keys extends Array<number | string>>(...keys: Keys) {
+  oneOf<Keys extends Array<number | string>>(...keys: Keys) {
     if (!this._rules) {
       throw Error(`Validation hasn't been initialized`)
     }
