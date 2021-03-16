@@ -47,7 +47,15 @@ export function generateLink<
         )
       : {}
 
-    const search = new URLSearchParams(queryParams).toString()
+      const search = Object.entries(queryParams).reduce((acc, [key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach(item => acc.append(key, item))
+          return acc
+        }
+        acc.set(key, String(value))
+        return acc
+      }, new URLSearchParams())
+
     const pathname = pathFatctory(pathParams)
     if (search) {
       return `${pathname}?${search}`
