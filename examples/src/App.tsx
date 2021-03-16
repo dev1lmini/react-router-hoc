@@ -31,7 +31,7 @@ function App() {
             <Article />
             <NotFound />
           </Switch>
-          <Link to={links.Home}>Home</Link>
+          <Link to={links.Home()}>Home</Link>
           <Link to={links.Dashboard({ role: "customer" })}>Dashboard</Link>
           <Link to={links.Search({ city: "Lviv" })}>Search</Link>
           <Link to={links.Article({ id: 10 })}>Article #10</Link>
