@@ -54,9 +54,10 @@ export function generateLink<
         }
         acc.set(key, String(value))
         return acc
-      }, new URLSearchParams())
+      }, new URLSearchParams()).toString()
 
     const pathname = pathFatctory(pathParams)
+
     if (search) {
       return `${pathname}?${search}`
     }
