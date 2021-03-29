@@ -52,7 +52,9 @@ export function generateLink<
           value.forEach(item => acc.append(key, item))
           return acc
         }
-        acc.set(key, String(value))
+        if (value !== undefined && value !== null) {
+          acc.set(key, String(value))
+        }
         return acc
       }, new URLSearchParams()).toString()
 
