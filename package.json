@@ -1,6 +1,6 @@
 {
   "name": "react-router-hoc",
-  "version": "0.2.0",
+  "version": "0.2.4",
   "description": "The binding for the react-router that provides a new way of declaring react-router route with params validation and typescript support",
   "main": "lib/index.js",
   "scripts": {

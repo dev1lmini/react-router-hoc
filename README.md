@@ -11,7 +11,7 @@ _The binding for react-router that provides a new way of declaring react-router 
 - 💻 Get suggestions in IDE
 
 <p align="center" width="100%">
-    <img width="100%" src="./capture.gif">
+    <img width="100%" src="https://github.com/dev1lmini/react-router-hoc/blob/master/capture.gif?raw=true">
 </p>
 
 ## Documentation
@@ -273,7 +273,7 @@ _Route HOC provides a way to declare validation rules for path and query params,
 
 | Rule                                   | Match                                         | Example                                                                                                                                                                                                                                  |
 | :------------------------------------- | :-------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Route.params.**string**`              | _Match any value_                             | `/:any` (`/228` -> `'228'` will be converted to a string)                                                                                                                                                                                |
+| `Route.params.string`              | _Match any value_                             | `/:any` (`/228` -> `'228'` will be converted to a string)                                                                                                                                                                                |
 | `Route.params.number`                  | _Match only numbers_                          | `/:number` (`'3078'` -> `3078` will be converted to a number, `/foo` won't match the route)                                                                                                                                              |
 | `Route.params.oneOf`                   | _Match one of variants_                       | `/customer` or `/employee`                                                                                                                                                                                                               |
 | `Route.params.regex`                   | _Match a regex_                               | `regex(/[0-9a-fA-f]{40}/)` (`ca82a6dff817ec66f44342007202690a93763949` match commit hash)                                                                                                                                                |
